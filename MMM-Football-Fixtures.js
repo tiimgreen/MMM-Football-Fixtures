@@ -28,7 +28,7 @@ Module.register('MMM-Football-Fixtures', {
 
     setInterval(
       this.updateDom.bind(this),
-      2000
+      5000
     );
   },
 
@@ -218,60 +218,6 @@ Module.register('MMM-Football-Fixtures', {
     }
 
     return table;
-
-    return $("<table class='xsmall'>\
-      <thead>\
-        <tr class='league-row'>\
-          <th colspan='5' class='centered league-cell'>Premier League</th>\
-        </tr>\
-      </thead>\
-      <tbody class='league-games'>\
-        <tr class='date-row'>\
-          <td colspan='5' class='centered'>Tue 6th Mar</td>\
-        </tr>\
-        <tr>\
-          <td><img class='team-icon' src='https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg'></td>\
-          <td class='team-cell -home'>Manchester City</td>\
-          <td>19:45</td>\
-          <td class='team-cell -away'>Juventus</td>\
-          <td><img class='team-icon' src='https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg'></td>\
-        </tr>\
-        <tr>\
-          <td><img class='team-icon' src='https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg'></td>\
-          <td class='team-cell -home'>Manchester United</td>\
-          <td>19:45</td>\
-          <td class='team-cell -away'>Paris Saint Germaint</td>\
-          <td><img class='team-icon' src='https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg'></td>\
-        </tr>\
-        <tr class='date-row'>\
-          <td colspan='5' class='centered'>Wed 7th Mar</td>\
-        </tr>\
-        <tr>\
-          <td><img class='team-icon' src='https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg'></td>\
-          <td class='team-cell -home'>Manchester City</td>\
-          <td>19:45</td>\
-          <td class='team-cell -away'>Juventus</td>\
-          <td><img class='team-icon' src='https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg'></td>\
-        </tr>\
-      </tbody>\
-      <thead>\
-        <tr class='league-row'>\
-          <th colspan='5' class='centered league-cell'>World Cup</th>\
-        </tr>\
-      </thead>\
-      <tbody class='league-games'>\
-        <tr class='date-row'>\
-          <td colspan='5' class='centered'>Tue 6th Mar</td>\
-        </tr>\
-        <tr>\
-          <td><img class='team-icon' src='https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg'></td>\
-          <td class='team-cell -home'>Manchester City</td>\
-          <td>19:45</td>\
-          <td class='team-cell -away'>Juventus</td>\
-          <td><img class='team-icon' src='https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg'></td>\
-        </tr>\
-      </tbody>\
-    </table>")[0];
   },
 
   socketNotificationReceived: function(notification, payload) {
