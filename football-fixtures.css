@@ -1,0 +1,32 @@
+.MMM-Football-Fixtures .centered {
+  text-align: center;
+}
+
+.MMM-Football-Fixtures .team-cell {
+  width: 150px;
+}
+
+.MMM-Football-Fixtures .team-cell.-home {
+  padding-right: 20px;
+  text-align: left;
+}
+
+.MMM-Football-Fixtures .team-cell.-away {
+  padding-left: 20px;
+  text-align: right;
+}
+
+.MMM-Football-Fixtures .league-row {
+
+}
+
+.MMM-Football-Fixtures .team-icon {
+  width: 20px;
+  margin-top: 4px;
+  margin-left: 7px;
+  margin-right: 7px;
+}
+
+.MMM-Football-Fixtures .league-games tr:last-child {
+  padding-bottom: 40px;
+}
