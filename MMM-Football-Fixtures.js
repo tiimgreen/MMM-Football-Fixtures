@@ -41,8 +41,10 @@ Module.register('MMM-Football-Fixtures', {
 
   updateLeagueTable: function(data, teams) {
     var prioritisedMatches = data.fixtures.filter(function(fixture) {
-      return teams.includes(fixture.homeTeamName) &&
-        teams.includes(fixture.awayTeamName);
+      return (
+        teams.includes(fixture.homeTeamName) &&
+        teams.includes(fixture.awayTeamName)
+      ) || data.id == 464 // show all champions league games;
     });
 
     function getFormattedDate(date) {
