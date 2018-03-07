@@ -10,7 +10,6 @@ module.exports = NodeHelper.create({
   socketNotificationReceived: function(notification, payload) {
     if (notification == 'GET_FOOTBALL_FIXTURES_DATA') {
       var fixtures = [];
-      var i = 1;
 
       for (var key in payload.leagues) {
         var options = {
@@ -21,15 +20,12 @@ module.exports = NodeHelper.create({
           options.headers = { 'X-Auth-Token': payload.api_key };
         }
 
-        var last = i == Object.keys(payload.leagues).length;
-        i++;
-
-        this.getData(options, payload, key, last);
+        this.getData(options, payload, key);
       }
     }
   },
 
-  getData: function(options, payload, key, last) {
+  getData: function(options, payload, key) {
     var self = this;
 
     request(options, function(error, response, body) {
@@ -39,8 +35,7 @@ module.exports = NodeHelper.create({
         self.sendSocketNotification('FOOTBALL_FIXTURES_DATA', {
           id: payload.leagues[key],
           league: key,
-          fixtures: JSON.parse(body).fixtures,
-          last: last
+          fixtures: JSON.parse(body).fixtures
         });
       }
     });

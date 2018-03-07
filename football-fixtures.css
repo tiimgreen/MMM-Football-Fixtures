@@ -16,17 +16,9 @@
   text-align: right;
 }
 
-.MMM-Football-Fixtures .league-row {
-
-}
-
 .MMM-Football-Fixtures .team-icon {
   width: 20px;
   margin-top: 4px;
   margin-left: 7px;
   margin-right: 7px;
-}
-
-.MMM-Football-Fixtures .league-games tr:last-child {
-  padding-bottom: 40px;
 }
