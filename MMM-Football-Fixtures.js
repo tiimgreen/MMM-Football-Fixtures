@@ -5,6 +5,9 @@ Module.register('MMM-Football-Fixtures', {
     leagues: {
       'Premier League': 445
     },
+    leagues_show_all_games: {
+      'Champions League': 464
+    },
     teams: [
       'Manchester City FC',
       'Tottenham Hotspur FC',
@@ -40,11 +43,19 @@ Module.register('MMM-Football-Fixtures', {
   },
 
   updateLeagueTable: function(data, teams) {
+    var config = this.config;
+
     var prioritisedMatches = data.fixtures.filter(function(fixture) {
+      for (key in config.leagues_show_all_games) {
+        if (config.leagues_show_all_games[key] == data.id) {
+          return true;
+        }
+      }
+
       return (
         teams.includes(fixture.homeTeamName) &&
         teams.includes(fixture.awayTeamName)
-      ) || data.id == 464 // show all champions league games;
+      );
     });
 
     function getFormattedDate(date) {
@@ -143,6 +154,11 @@ Module.register('MMM-Football-Fixtures', {
   },
 
   getDom: function() {
+
+    function pad(num, size) {
+        return ('000000000' + num).substr(-size);
+    }
+
     var table = document.createElement('table');
     table.classList.add('football-fixtures-table', 'xsmall');
 
@@ -194,7 +210,7 @@ Module.register('MMM-Football-Fixtures', {
 
           var gameTimeCell = document.createElement('td');
           var date = new Date(game.date);
-          gameTimeCell.innerHTML = date.getHours() + ':' + date.getMinutes();
+          gameTimeCell.innerHTML = date.getHours() + ':' + pad(date.getMinutes(), 2);
 
           var awayIconCell = document.createElement('td');
           var awayIcon = document.createElement('img');
