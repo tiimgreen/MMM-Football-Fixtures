@@ -42,10 +42,10 @@ Module.register('MMM-Football-Fixtures', {
     this.config.teamBadges['Belgium'] = 'https://img.fifa.com/images/flags/4/bel.png';
     this.config.teamBadges['Portugal'] = 'https://img.fifa.com/images/flags/4/por.png';
     this.config.teamBadges['Argentina'] = 'https://img.fifa.com/images/flags/4/arg.png';
-    this.config.teamBadges['Switzerland'] = 'https://img.fifa.com/images/flags/4/sui.png';
+    this.config.teamBadges['Switzerland'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Switzerland.svg/1024px-Flag_of_Switzerland.svg.png';
     this.config.teamBadges['France'] = 'https://img.fifa.com/images/flags/4/fra.png';
     this.config.teamBadges['Poland'] = 'https://img.fifa.com/images/flags/4/pol.png';
-    this.config.teamBadges['Spian'] = 'https://img.fifa.com/images/flags/4/esp.png';
+    this.config.teamBadges['Spain'] = 'https://img.fifa.com/images/flags/4/esp.png';
     this.config.teamBadges['Peru'] = 'https://img.fifa.com/images/flags/4/per.png';
     this.config.teamBadges['Denmark'] = 'https://img.fifa.com/images/flags/4/den.png';
     this.config.teamBadges['England'] = 'https://img.fifa.com/images/flags/4/eng.png';
@@ -64,6 +64,10 @@ Module.register('MMM-Football-Fixtures', {
     this.config.teamBadges['Morocco'] = 'https://img.fifa.com/images/flags/4/mar.png';
     this.config.teamBadges['Egypt'] = 'https://img.fifa.com/images/flags/4/egy.png';
     this.config.teamBadges['Nigeria'] = 'https://img.fifa.com/images/flags/4/nga.png';
+    this.config.teamBadges['Korea Republic'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/255px-Flag_of_South_Korea.svg.png';
+    this.config.teamBadges['Panama'] = 'https://www.onlinestores.com/flagdetective/images/download/panama-hi.jpg';
+    this.config.teamBadges['Saudi Arabia'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Flag_of_Saudi_Arabia.svg/1000px-Flag_of_Saudi_Arabia.svg.png';
+    this.config.teamBadges['Japan'] = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png';
   },
 
   getData: function() {
