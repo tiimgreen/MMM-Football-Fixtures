@@ -115,7 +115,7 @@ Module.register('MMM-Football-Fixtures', {
 
     function addToFormattedMatchesArray(array, match) {
       var formattedDate = getFormattedDate(new Date(match.date));
-      var index = findObjectWithDate(formattedMatches, formattedDate);
+      var index = findObjectWithDate(array, formattedDate);
 
       if (index == -1) {
         array.push({
@@ -142,9 +142,12 @@ Module.register('MMM-Football-Fixtures', {
     for (var i = 0; i < formattedMatches.length; i++) {
       for (var j = 0; j < formattedMatches[i].games.length; j++) {
         var match = formattedMatches[i].games[j];
+
         if (!this.config.display_max || gameCounter < this.config.display_max) {
           addToFormattedMatchesArray(limitedMatches, match);
         }
+
+        gameCounter++;
       }
     }
 
