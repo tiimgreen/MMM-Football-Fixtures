@@ -87,6 +87,10 @@ Module.register('MMM-Football-Fixtures', {
         }
       }
 
+      if (data.league == "World Cup") {
+        return true;
+      }
+
       return (
         teams.includes(fixture.homeTeamName) ||
         teams.includes(fixture.awayTeamName)
