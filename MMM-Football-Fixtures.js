@@ -14,9 +14,7 @@ Module.register('MMM-Football-Fixtures', {
       'Chelsea FC',
       'Manchester United FC'
     ],
-    teamBadges: {
-
-    }
+    teamBadges: {}
   },
 
   leagueTable: {},
@@ -39,8 +37,34 @@ Module.register('MMM-Football-Fixtures', {
   },
 
   setTeamBadges: function() {
-    this.config.teamBadges['Portugal'] = 'https://upload.wikimedia.org/wikipedia/en/thumb/5/5f/Portuguese_Football_Federation.svg/274px-Portuguese_Football_Federation.svg.png';
-  }
+    this.config.teamBadges['Germany'] = 'https://img.fifa.com/images/flags/4/ger.png';
+    this.config.teamBadges['Brazil'] = 'https://img.fifa.com/images/flags/4/bra.png';
+    this.config.teamBadges['Belgium'] = 'https://img.fifa.com/images/flags/4/bel.png';
+    this.config.teamBadges['Portugal'] = 'https://img.fifa.com/images/flags/4/por.png';
+    this.config.teamBadges['Argentina'] = 'https://img.fifa.com/images/flags/4/arg.png';
+    this.config.teamBadges['Switzerland'] = 'https://img.fifa.com/images/flags/4/sui.png';
+    this.config.teamBadges['France'] = 'https://img.fifa.com/images/flags/4/fra.png';
+    this.config.teamBadges['Poland'] = 'https://img.fifa.com/images/flags/4/pol.png';
+    this.config.teamBadges['Spian'] = 'https://img.fifa.com/images/flags/4/esp.png';
+    this.config.teamBadges['Peru'] = 'https://img.fifa.com/images/flags/4/per.png';
+    this.config.teamBadges['Denmark'] = 'https://img.fifa.com/images/flags/4/den.png';
+    this.config.teamBadges['England'] = 'https://img.fifa.com/images/flags/4/eng.png';
+    this.config.teamBadges['Uruguay'] = 'https://img.fifa.com/images/flags/4/uru.png';
+    this.config.teamBadges['Mexico'] = 'https://img.fifa.com/images/flags/4/mex.png';
+    this.config.teamBadges['Colombia'] = 'https://img.fifa.com/images/flags/4/col.png';
+    this.config.teamBadges['Croatia'] = 'https://img.fifa.com/images/flags/4/cro.png';
+    this.config.teamBadges['Tunisia'] = 'https://img.fifa.com/images/flags/4/tun.png';
+    this.config.teamBadges['Iceland'] = 'https://img.fifa.com/images/flags/4/isl.png';
+    this.config.teamBadges['Costa Rica'] = 'https://img.fifa.com/images/flags/4/crc.png';
+    this.config.teamBadges['Sweden'] = 'https://img.fifa.com/images/flags/4/swe.png';
+    this.config.teamBadges['Senegal'] = 'https://img.fifa.com/images/flags/4/sen.png';
+    this.config.teamBadges['Serbia'] = 'https://img.fifa.com/images/flags/4/srb.png';
+    this.config.teamBadges['Australia'] = 'https://img.fifa.com/images/flags/4/aus.png';
+    this.config.teamBadges['Iran'] = 'https://img.fifa.com/images/flags/4/irn.png';
+    this.config.teamBadges['Morocco'] = 'https://img.fifa.com/images/flags/4/mar.png';
+    this.config.teamBadges['Egypt'] = 'https://img.fifa.com/images/flags/4/egy.png';
+    this.config.teamBadges['Nigeria'] = 'https://img.fifa.com/images/flags/4/nga.png';
+  },
 
   getData: function() {
     this.sendSocketNotification(
