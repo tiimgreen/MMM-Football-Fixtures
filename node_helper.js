@@ -12,7 +12,7 @@ module.exports = NodeHelper.create({
 
       for (var key in payload.leagues) {
         var options = {
-          url: 'http://api.football-data.org/v1/competitions/' + payload.leagues[key] + '/fixtures?timeFrame=n7'
+          url: 'http://api.football-data.org/v1/competitions/' + payload.leagues[key] + '/fixtures?timeFrame=n28'
         }
 
         if (payload.api_key) {
@@ -29,7 +29,7 @@ module.exports = NodeHelper.create({
 
     request(options, function(error, response, body) {
       if (error) {
-        console.error('Error: ' + error);
+        console.log('error: ', error);
       } else if (parseInt(response.statusCode) == 200) {
         self.sendSocketNotification('FOOTBALL_FIXTURES_DATA', {
           id: payload.leagues[key],

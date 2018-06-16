@@ -53,7 +53,7 @@ Module.register('MMM-Football-Fixtures', {
       }
 
       return (
-        teams.includes(fixture.homeTeamName) &&
+        teams.includes(fixture.homeTeamName) ||
         teams.includes(fixture.awayTeamName)
       );
     });
@@ -156,7 +156,7 @@ Module.register('MMM-Football-Fixtures', {
   getDom: function() {
 
     function pad(num, size) {
-        return ('000000000' + num).substr(-size);
+      return ('000000000' + num).substr(-size);
     }
 
     var table = document.createElement('table');
