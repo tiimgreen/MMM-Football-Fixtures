@@ -14,13 +14,16 @@ Module.register('MMM-Football-Fixtures', {
       'Chelsea FC',
       'Manchester United FC'
     ],
-    max_teams: 10
+    teamBadges: {
+
+    }
   },
 
   leagueTable: {},
 
   start: function() {
     Log.info('Starting module: ' + this.name);
+    this.setTeamBadges();
     this.getData();
 
     // refresh every x milliseconds
@@ -34,6 +37,10 @@ Module.register('MMM-Football-Fixtures', {
       5000
     );
   },
+
+  setTeamBadges: function() {
+    this.config.teamBadges['Portugal'] = 'https://upload.wikimedia.org/wikipedia/en/thumb/5/5f/Portuguese_Football_Federation.svg/274px-Portuguese_Football_Federation.svg.png';
+  }
 
   getData: function() {
     this.sendSocketNotification(
@@ -220,7 +227,12 @@ Module.register('MMM-Football-Fixtures', {
           var homeIconCell = document.createElement('td');
           var homeIcon = document.createElement('img');
           homeIcon.classList.add('team-icon');
-          homeIcon.src = 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg';
+
+          if (this.config.teamBadges[game.homeTeamName]) {
+            homeIcon.src = this.config.teamBadges[game.homeTeamName]
+          } else {
+            homeIcon.src = 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg';
+          }
 
           homeIconCell.appendChild(homeIcon);
           var homeTeamName = document.createElement('td');
@@ -234,7 +246,12 @@ Module.register('MMM-Football-Fixtures', {
           var awayIconCell = document.createElement('td');
           var awayIcon = document.createElement('img');
           awayIcon.classList.add('team-icon');
-          awayIcon.src = 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg';
+
+          if (this.config.teamBadges[game.awayTeamName]) {
+            awayIcon.src = this.config.teamBadges[game.awayTeamName]
+          } else {
+            awayIcon.src = 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg';
+          }
 
           awayIconCell.appendChild(awayIcon);
           var awayTeamName = document.createElement('td');
