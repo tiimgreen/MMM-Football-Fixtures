@@ -113,27 +113,43 @@ Module.register('MMM-Football-Fixtures', {
       return 0;
     }
 
-    var formattedMatches = [];
-
-    prioritisedMatches.map(function(match) {
+    function addToFormattedMatchesArray(array, match) {
       var formattedDate = getFormattedDate(new Date(match.date));
       var index = findObjectWithDate(formattedMatches, formattedDate);
 
       if (index == -1) {
-        formattedMatches.push({
+        array.push({
           formattedDate: formattedDate,
           games: [
             match
           ]
         });
       } else {
-        formattedMatches[index].games.push(match);
-        formattedMatches[index].games = formattedMatches[index].games.sort(sortByKickOff);
+        array[index].games.push(match);
+        array[index].games = array[index].games.sort(sortByKickOff);
       }
+    }
+
+    var formattedMatches = [];
+
+    prioritisedMatches.map(function(match) {
+      addToFormattedMatchesArray(formattedMatches, match);
     });
 
-    if (formattedMatches.length > 0) {
-      this.leagueTable[data.league] = formattedMatches.sort(sortByDay);
+    var gameCounter = 0;
+    var limitedMatches = [];
+
+    for (var i = 0; i < formattedMatches.length; i++) {
+      for (var j = 0; j < formattedMatches[i].games.length; j++) {
+        var match = formattedMatches[i].games[j];
+        if (!this.config.display_max || gameCounter < this.config.display_max) {
+          addToFormattedMatchesArray(limitedMatches, match);
+        }
+      }
+    }
+
+    if (limitedMatches.length > 0) {
+      this.leagueTable[data.league] = limitedMatches.sort(sortByDay);
     }
   },
 
