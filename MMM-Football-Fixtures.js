@@ -68,6 +68,7 @@ Module.register('MMM-Football-Fixtures', {
     this.config.teamBadges['Panama'] = 'https://www.onlinestores.com/flagdetective/images/download/panama-hi.jpg';
     this.config.teamBadges['Saudi Arabia'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Flag_of_Saudi_Arabia.svg/1000px-Flag_of_Saudi_Arabia.svg.png';
     this.config.teamBadges['Japan'] = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png';
+    this.config.teamBadges['Russia'] = 'https://upload.wikimedia.org/wikipedia/en/archive/f/f3/20120812153730%21Flag_of_Russia.svg';
   },
 
   getData: function() {
