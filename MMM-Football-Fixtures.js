@@ -8,12 +8,7 @@ Module.register('MMM-Football-Fixtures', {
     leagues_show_all_games: {
       'Champions League': 464
     },
-    teams: [
-      'Manchester City FC',
-      'Tottenham Hotspur FC',
-      'Chelsea FC',
-      'Manchester United FC'
-    ],
+    teams: [],
     teamComparator: "OR"
   },
 
