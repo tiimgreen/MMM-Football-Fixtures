@@ -11,20 +11,28 @@ module.exports = NodeHelper.create({
       var fixtures = [];
 
       for (var key in payload.leagues) {
-        var options = {
-          url: 'http://api.football-data.org/v1/competitions/' + payload.leagues[key] + '/fixtures?timeFrame=n28'
-        }
+        this.fetchData(payload, payload.leagues, key);
+      }
 
-        if (payload.api_key) {
-          options.headers = { 'X-Auth-Token': payload.api_key };
-        }
-
-        this.getData(options, payload, key);
+      for (var key in payload.leagues_show_all_games) {
+        this.fetchData(payload, payload.leagues_show_all_games, key);
       }
     }
   },
 
-  getData: function(options, payload, key) {
+  fetchData: function(payload, leagues, key) {
+    var options = {
+      url: 'http://api.football-data.org/v1/competitions/' + leagues[key] + '/fixtures?timeFrame=n28'
+    }
+
+    if (payload.api_key) {
+      options.headers = { 'X-Auth-Token': payload.api_key };
+    }
+
+    this.getData(options, payload, leagues, key);
+  },
+
+  getData: function(options, payload, leagues, key) {
     var self = this;
 
     request(options, function(error, response, body) {
@@ -32,7 +40,7 @@ module.exports = NodeHelper.create({
         console.log('error: ', error);
       } else if (parseInt(response.statusCode) == 200) {
         self.sendSocketNotification('FOOTBALL_FIXTURES_DATA', {
-          id: payload.leagues[key],
+          id: leagues[key],
           league: key,
           fixtures: JSON.parse(body).fixtures
         });
