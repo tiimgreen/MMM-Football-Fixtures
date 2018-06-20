@@ -2,12 +2,8 @@ Module.register('MMM-Football-Fixtures', {
   defaults: {
     api_key: false,
     coloured: false,
-    leagues: {
-      'Premier League': 445
-    },
-    leagues_show_all_games: {
-      'Champions League': 464
-    },
+    leagues: {},
+    leagues_show_all_games: {},
     teams: [],
     teamComparator: "OR"
   },
