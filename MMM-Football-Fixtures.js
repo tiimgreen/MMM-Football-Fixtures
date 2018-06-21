@@ -1,11 +1,13 @@
 Module.register('MMM-Football-Fixtures', {
   defaults: {
-    api_key: false,
+    apiKey: false,
     coloured: false,
     leagues: {},
-    leagues_show_all_games: {},
+    leaguesShowAllGames: {},
     teams: [],
-    teamComparator: "OR"
+    teamComparator: "OR",
+    teamBadges: {},
+    timeFrame: "n7"
   },
 
   leagueTable: {},
@@ -13,13 +15,12 @@ Module.register('MMM-Football-Fixtures', {
 
   start: function() {
     Log.info('Starting module: ' + this.name);
-    this.setTeamBadges();
     this.getData();
 
     // refresh every x milliseconds
     setInterval(
       this.getData.bind(this),
-      this.config.api_key ? 300000 : 1800000 // with api_key every 5min, without every 30min
+      this.config.apiKey ? 300000 : 1800000 // with apiKey every 5min, without every 30min
     );
 
     setInterval(
@@ -28,57 +29,14 @@ Module.register('MMM-Football-Fixtures', {
     );
   },
 
-  setTeamBadges: function() {
-    this.teamBadges['Germany'] = 'https://img.fifa.com/images/flags/4/ger.png';
-    this.teamBadges['Brazil'] = 'https://img.fifa.com/images/flags/4/bra.png';
-    this.teamBadges['Belgium'] = 'https://img.fifa.com/images/flags/4/bel.png';
-    this.teamBadges['Portugal'] = 'https://img.fifa.com/images/flags/4/por.png';
-    this.teamBadges['Argentina'] = 'https://img.fifa.com/images/flags/4/arg.png';
-    this.teamBadges['Switzerland'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Switzerland.svg/1024px-Flag_of_Switzerland.svg.png';
-    this.teamBadges['France'] = 'https://img.fifa.com/images/flags/4/fra.png';
-    this.teamBadges['Poland'] = 'https://img.fifa.com/images/flags/4/pol.png';
-    this.teamBadges['Spain'] = 'https://img.fifa.com/images/flags/4/esp.png';
-    this.teamBadges['Peru'] = 'https://img.fifa.com/images/flags/4/per.png';
-    this.teamBadges['Denmark'] = 'https://img.fifa.com/images/flags/4/den.png';
-    this.teamBadges['England'] = 'https://img.fifa.com/images/flags/4/eng.png';
-    this.teamBadges['Uruguay'] = 'https://img.fifa.com/images/flags/4/uru.png';
-    this.teamBadges['Mexico'] = 'https://img.fifa.com/images/flags/4/mex.png';
-    this.teamBadges['Colombia'] = 'https://img.fifa.com/images/flags/4/col.png';
-    this.teamBadges['Croatia'] = 'https://img.fifa.com/images/flags/4/cro.png';
-    this.teamBadges['Tunisia'] = 'https://img.fifa.com/images/flags/4/tun.png';
-    this.teamBadges['Iceland'] = 'https://img.fifa.com/images/flags/4/isl.png';
-    this.teamBadges['Costa Rica'] = 'https://img.fifa.com/images/flags/4/crc.png';
-    this.teamBadges['Sweden'] = 'https://img.fifa.com/images/flags/4/swe.png';
-    this.teamBadges['Senegal'] = 'https://img.fifa.com/images/flags/4/sen.png';
-    this.teamBadges['Serbia'] = 'https://img.fifa.com/images/flags/4/srb.png';
-    this.teamBadges['Australia'] = 'https://img.fifa.com/images/flags/4/aus.png';
-    this.teamBadges['Iran'] = 'https://img.fifa.com/images/flags/4/irn.png';
-    this.teamBadges['Morocco'] = 'https://img.fifa.com/images/flags/4/mar.png';
-    this.teamBadges['Egypt'] = 'https://img.fifa.com/images/flags/4/egy.png';
-    this.teamBadges['Nigeria'] = 'https://img.fifa.com/images/flags/4/nga.png';
-    this.teamBadges['Korea Republic'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Flag_of_South_Korea.svg/255px-Flag_of_South_Korea.svg.png';
-    this.teamBadges['Panama'] = 'https://www.onlinestores.com/flagdetective/images/download/panama-hi.jpg';
-    this.teamBadges['Saudi Arabia'] = 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Flag_of_Saudi_Arabia.svg/1000px-Flag_of_Saudi_Arabia.svg.png';
-    this.teamBadges['Japan'] = 'https://upload.wikimedia.org/wikipedia/en/thumb/9/9e/Flag_of_Japan.svg/1200px-Flag_of_Japan.svg.png';
-    this.teamBadges['Russia'] = 'https://upload.wikimedia.org/wikipedia/en/archive/f/f3/20120812153730%21Flag_of_Russia.svg';
-
-    // add user defined team badges
-    if (this.config.teamBadges) {
-      for (var team in this.config.teamBadges) {
-        if (this.config.teamBadges.hasOwnProperty(key)) {
-          this.teamBadges[team] = this.config.teamBadges[team];
-        }
-      }
-    }
-  },
-
   getData: function() {
     this.sendSocketNotification(
       'GET_FOOTBALL_FIXTURES_DATA',
       {
-        api_key: this.config.api_key,
+        apiKey: this.config.apiKey,
         leagues: this.config.leagues,
-        leagues_show_all_games: this.config.leagues_show_all_games
+        leaguesShowAllGames: this.config.leaguesShowAllGames,
+        timeFrame: this.config.timeFrame
       }
     );
   },
@@ -87,8 +45,8 @@ Module.register('MMM-Football-Fixtures', {
     var config = this.config;
 
     var prioritisedMatches = data.fixtures.filter(function(fixture) {
-      for (key in config.leagues_show_all_games) {
-        if (config.leagues_show_all_games[key] == data.id) {
+      for (key in config.leaguesShowAllGames) {
+        if (config.leaguesShowAllGames[key] == data.id) {
           return true;
         }
       }
@@ -269,8 +227,8 @@ Module.register('MMM-Football-Fixtures', {
           var homeIcon = document.createElement('img');
           homeIcon.classList.add('team-icon');
 
-          if (this.teamBadges[game.homeTeamName]) {
-            homeIcon.src = this.teamBadges[game.homeTeamName]
+          if (this.config.teamBadges[game.homeTeamName]) {
+            homeIcon.src = this.config.teamBadges[game.homeTeamName]
           } else {
             homeIcon.src = 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg';
           }
@@ -288,8 +246,8 @@ Module.register('MMM-Football-Fixtures', {
           var awayIcon = document.createElement('img');
           awayIcon.classList.add('team-icon');
 
-          if (this.teamBadges[game.awayTeamName]) {
-            awayIcon.src = this.teamBadges[game.awayTeamName]
+          if (this.config.teamBadges[game.awayTeamName]) {
+            awayIcon.src = this.config.teamBadges[game.awayTeamName]
           } else {
             awayIcon.src = 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg';
           }

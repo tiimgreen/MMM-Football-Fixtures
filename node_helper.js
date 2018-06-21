@@ -22,7 +22,7 @@ module.exports = NodeHelper.create({
 
   fetchData: function(payload, leagues, key) {
     var options = {
-      url: 'http://api.football-data.org/v1/competitions/' + leagues[key] + '/fixtures?timeFrame=n28'
+      url: 'http://api.football-data.org/v1/competitions/' + leagues[key] + '/fixtures?timeFrame=' + payload.timeFrame
     }
 
     if (payload.api_key) {
