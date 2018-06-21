@@ -14,8 +14,8 @@ module.exports = NodeHelper.create({
         this.fetchData(payload, payload.leagues, key);
       }
 
-      for (var key in payload.leagues_show_all_games) {
-        this.fetchData(payload, payload.leagues_show_all_games, key);
+      for (var key in payload.leaguesShowAllGames) {
+        this.fetchData(payload, payload.leaguesShowAllGames, key);
       }
     }
   },
@@ -24,6 +24,8 @@ module.exports = NodeHelper.create({
     var options = {
       url: 'http://api.football-data.org/v1/competitions/' + leagues[key] + '/fixtures?timeFrame=' + payload.timeFrame
     }
+
+    console.log(options);
 
     if (payload.api_key) {
       options.headers = { 'X-Auth-Token': payload.api_key };
