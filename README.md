@@ -2,6 +2,12 @@
 
 A MagicMirror module to display upcoming fixtures for your chosen football leagues and teams.
 
+Example:
+
+![Example fixtures table](https://i.imgur.com/PMTg2hG.png)
+
+MMM-Football-Fixtures uses [football-data.org](https://www.football-data.org/) as a data source.
+
 ## Config Options
 
 | Option | Default value | Description |
