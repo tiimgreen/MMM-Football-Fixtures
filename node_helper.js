@@ -25,10 +25,8 @@ module.exports = NodeHelper.create({
       url: 'http://api.football-data.org/v1/competitions/' + leagues[key] + '/fixtures?timeFrame=' + payload.timeFrame
     }
 
-    console.log(options);
-
-    if (payload.api_key) {
-      options.headers = { 'X-Auth-Token': payload.api_key };
+    if (payload.apiKey) {
+      options.headers = { 'X-Auth-Token': payload.apiKey };
     }
 
     this.getData(options, payload, leagues, key);
