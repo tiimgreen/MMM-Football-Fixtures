@@ -7,7 +7,8 @@ Module.register('MMM-Football-Fixtures', {
     teams: [],
     teamComparator: "OR",
     teamBadges: {},
-    timeFrame: "n7"
+    timeFrame: "n7",
+    displayMax: 10,
   },
 
   leagueTable: {},
@@ -185,6 +186,9 @@ Module.register('MMM-Football-Fixtures', {
     var table = document.createElement('table');
     table.classList.add('football-fixtures-table', 'xsmall');
 
+    var maxGames = this.config.displayMax;
+    var eachLeague = Math.floor(maxGames / Object.keys(this.leagueTable).length);
+
     for (var league in this.leagueTable) {
       var leagueHeader = document.createElement('thead');
       var leagueRow = document.createElement('tr');
@@ -198,6 +202,8 @@ Module.register('MMM-Football-Fixtures', {
       leagueRow.appendChild(leagueHead);
       leagueHeader.appendChild(leagueRow);
       table.appendChild(leagueHeader);
+
+      var gameCount = 0;
 
       var leagueGames = document.createElement('tbody');
       leagueGames.classList.add('league-games');
@@ -217,6 +223,12 @@ Module.register('MMM-Football-Fixtures', {
         leagueGames.appendChild(dateRow);
 
         for (var j = 0; j < day.games.length; j++) {
+          gameCount++;
+
+          if (gameCount > eachLeague) {
+            break;
+          }
+
           var game = day.games[j];
 
           var gameRow = document.createElement('tr');
@@ -263,6 +275,14 @@ Module.register('MMM-Football-Fixtures', {
 
           leagueGames.appendChild(gameRow);
         }
+
+        if (gameCount > eachLeague) {
+          break;
+        }
+      }
+
+      if (gameCount == 0) {
+        break;
       }
 
       table.appendChild(leagueGames);
