@@ -20,13 +20,10 @@ Module.register('MMM-Football-Fixtures', {
     // refresh every x milliseconds
     setInterval(
       this.getData.bind(this),
-      this.config.apiKey ? 300000 : 1800000 // with apiKey every 5min, without every 30min
+      this.config.apiKey ? 900000 : 1800000 // with apiKey every 15min, without every 30min
     );
 
-    setInterval(
-      this.updateDom.bind(this),
-      5000
-    );
+    this.updateDom = this.updateDom.bind(this)
   },
 
   getData: function() {
@@ -36,7 +33,8 @@ Module.register('MMM-Football-Fixtures', {
         apiKey: this.config.apiKey,
         leagues: this.config.leagues,
         leaguesShowAllGames: this.config.leaguesShowAllGames,
-        timeFrame: this.config.timeFrame
+        timeFrame: this.config.timeFrame,
+        displayMax: this.config.displayMax
       }
     );
   },
@@ -44,23 +42,23 @@ Module.register('MMM-Football-Fixtures', {
   updateLeagueTable: function(data, teams) {
     var config = this.config;
 
-    var prioritisedMatches = data.fixtures.filter(function(fixture) {
+    var prioritisedMatches = data.matches.filter(function(match) {
       for (key in config.leaguesShowAllGames) {
-        if (config.leaguesShowAllGames[key] == data.id) {
+        if (config.leaguesShowAllGames[key] == data.competition.code) {
           return true;
         }
       }
 
       if (config.teamComparator == "AND") {
         return (
-          teams.includes(fixture.homeTeamName) &&
-          teams.includes(fixture.awayTeamName)
+          teams.includes(match.homeTeam.name) &&
+          teams.includes(match.awayTeam.name)
         );
       }
 
       return (
-        teams.includes(fixture.homeTeamName) ||
-        teams.includes(fixture.awayTeamName)
+        teams.includes(match.homeTeam.name) ||
+        teams.includes(match.awayTeam.name)
       );
     });
 
@@ -105,8 +103,8 @@ Module.register('MMM-Football-Fixtures', {
     }
 
     function sortByKickOff(a, b) {
-      var dateA = Date.parse(a.date);
-      var dateB = Date.parse(b.date);
+      var dateA = Date.parse(a.utcDate);
+      var dateB = Date.parse(b.utcDate);
 
       if (dateA < dateB) {
         return -1;
@@ -120,7 +118,7 @@ Module.register('MMM-Football-Fixtures', {
     }
 
     function addToFormattedMatchesArray(array, match) {
-      var formattedDate = getFormattedDate(new Date(match.date));
+      var formattedDate = getFormattedDate(new Date(match.utcDate));
       var index = findObjectWithDate(array, formattedDate);
 
       if (index == -1) {
@@ -149,7 +147,7 @@ Module.register('MMM-Football-Fixtures', {
       for (var j = 0; j < formattedMatches[i].games.length; j++) {
         var match = formattedMatches[i].games[j];
 
-        if (!this.config.display_max || gameCounter < this.config.display_max) {
+        if (!this.config.displayMax || gameCounter < this.config.displayMax) {
           addToFormattedMatchesArray(limitedMatches, match);
         }
 
@@ -227,35 +225,35 @@ Module.register('MMM-Football-Fixtures', {
           var homeIcon = document.createElement('img');
           homeIcon.classList.add('team-icon');
 
-          if (this.config.teamBadges[game.homeTeamName]) {
-            homeIcon.src = this.config.teamBadges[game.homeTeamName]
+          if (this.config.teamBadges[game.homeTeam.name]) {
+            homeIcon.src = this.config.teamBadges[game.homeTeam.name]
           } else {
-            homeIcon.src = 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg';
+            homeIcon.src = 'http://en.fodb.net/img/club/England/100/Leeds-United.png';
           }
 
           homeIconCell.appendChild(homeIcon);
           var homeTeamName = document.createElement('td');
           homeTeamName.classList.add('team-cell', '-home');
-          homeTeamName.innerHTML = game.homeTeamName;
+          homeTeamName.innerHTML = game.homeTeam.name;
 
           var gameTimeCell = document.createElement('td');
-          var date = new Date(game.date);
+          var date = new Date(game.utcDate);
           gameTimeCell.innerHTML = date.getHours() + ':' + pad(date.getMinutes(), 2);
 
           var awayIconCell = document.createElement('td');
           var awayIcon = document.createElement('img');
           awayIcon.classList.add('team-icon');
 
-          if (this.config.teamBadges[game.awayTeamName]) {
-            awayIcon.src = this.config.teamBadges[game.awayTeamName]
+          if (this.config.teamBadges[game.awayTeam.name]) {
+            awayIcon.src = this.config.teamBadges[game.awayTeam.name]
           } else {
-            awayIcon.src = 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg';
+            awayIcon.src = 'http://en.fodb.net/img/club/England/100/Leeds-United.png';
           }
 
           awayIconCell.appendChild(awayIcon);
           var awayTeamName = document.createElement('td');
           awayTeamName.classList.add('team-cell', '-away');
-          awayTeamName.innerHTML = game.awayTeamName;
+          awayTeamName.innerHTML = game.awayTeam.name;
 
           gameRow.appendChild(homeIconCell);
           gameRow.appendChild(homeTeamName);
@@ -277,6 +275,7 @@ Module.register('MMM-Football-Fixtures', {
     switch (notification) {
       case 'FOOTBALL_FIXTURES_DATA':
         this.updateLeagueTable(payload, this.config.teams);
+        this.updateDom();
         break;
     }
   }

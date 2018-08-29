@@ -22,7 +22,7 @@ module.exports = NodeHelper.create({
 
   fetchData: function(payload, leagues, key) {
     var options = {
-      url: 'http://api.football-data.org/v1/competitions/' + leagues[key] + '/fixtures?timeFrame=' + payload.timeFrame
+      url: 'http://api.football-data.org/v2/competitions/' + leagues[key] + '/matches/?status=SCHEDULED,LIVE,IN_PLAY'
     }
 
     if (payload.apiKey) {
@@ -42,7 +42,7 @@ module.exports = NodeHelper.create({
         self.sendSocketNotification('FOOTBALL_FIXTURES_DATA', {
           id: leagues[key],
           league: key,
-          fixtures: JSON.parse(body).fixtures
+          matches: JSON.parse(body).matches
         });
       }
     });
