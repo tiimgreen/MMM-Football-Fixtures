@@ -14,6 +14,10 @@ module.exports = NodeHelper.create({
         this.fetchData(payload, payload.leagues, key);
       }
 
+      for (var key in payload.preferredLeagues) {
+        this.fetchData(payload, payload.preferredLeagues, key);
+      }
+
       for (var key in payload.leaguesShowAllGames) {
         this.fetchData(payload, payload.leaguesShowAllGames, key);
       }
@@ -21,9 +25,27 @@ module.exports = NodeHelper.create({
   },
 
   fetchData: function(payload, leagues, key) {
-    var options = {
-      url: 'http://api.football-data.org/v2/competitions/' + leagues[key] + '/matches/?status=SCHEDULED,LIVE,IN_PLAY'
+    Date.prototype.addDays = function(days) {
+      var date = new Date(this.valueOf());
+      date.setDate(date.getDate() + days);
+      return date;
     }
+
+    function pad(num, size) {
+      return ('000000000' + num).substr(-size);
+    }
+
+    var date = new Date();
+    var dateBehind = date.addDays(-1 * payload.daysBehind);
+    var dateString = dateBehind.getFullYear() + '-' + pad(dateBehind.getMonth() + 1, 2) + '-' + pad(dateBehind.getDate(), 2)
+    var futureDate = date.addDays(payload.daysAhead);
+    var futureDateString = futureDate.getFullYear() + '-' + pad(futureDate.getMonth() + 1, 2) + '-' + pad(futureDate.getDate(), 2)
+
+    var options = {
+      url: 'http://api.football-data.org/v2/competitions/' + leagues[key] + '/matches/?status=FINISHED,SCHEDULED,LIVE,IN_PLAY&dateFrom=' + dateString + '&dateTo=' + futureDateString
+    }
+
+    console.log('options', options)
 
     if (payload.apiKey) {
       options.headers = { 'X-Auth-Token': payload.apiKey };
@@ -42,7 +64,8 @@ module.exports = NodeHelper.create({
         self.sendSocketNotification('FOOTBALL_FIXTURES_DATA', {
           id: leagues[key],
           league: key,
-          matches: JSON.parse(body).matches
+          matches: JSON.parse(body).matches,
+          competition: JSON.parse(body).competition
         });
       }
     });

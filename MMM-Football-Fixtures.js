@@ -3,15 +3,15 @@ Module.register('MMM-Football-Fixtures', {
     apiKey: false,
     coloured: false,
     leagues: {},
+    preferredLeagues: {},
     leaguesShowAllGames: {},
     teams: [],
-    teamComparator: "OR",
     teamBadges: {},
-    timeFrame: "n7",
+    daysAhead: 28,
     displayMax: 10,
   },
 
-  leagueTable: {},
+  leagueTable: [],
   teamBadges: {},
 
   start: function() {
@@ -24,7 +24,11 @@ Module.register('MMM-Football-Fixtures', {
       this.config.apiKey ? 900000 : 1800000 // with apiKey every 15min, without every 30min
     );
 
-    this.updateDom = this.updateDom.bind(this)
+    // refresh every x milliseconds
+    setInterval(
+      this.updateDom.bind(this),
+      5000
+    );
   },
 
   getData: function() {
@@ -33,8 +37,10 @@ Module.register('MMM-Football-Fixtures', {
       {
         apiKey: this.config.apiKey,
         leagues: this.config.leagues,
+        preferredLeagues: this.config.preferredLeagues,
         leaguesShowAllGames: this.config.leaguesShowAllGames,
-        timeFrame: this.config.timeFrame,
+        daysAhead: this.config.daysAhead,
+        daysBehind: this.config.daysBehind,
         displayMax: this.config.displayMax
       }
     );
@@ -50,17 +56,25 @@ Module.register('MMM-Football-Fixtures', {
         }
       }
 
-      if (config.teamComparator == "AND") {
-        return (
-          teams.includes(match.homeTeam.name) &&
-          teams.includes(match.awayTeam.name)
-        );
+      for (key in config.preferredLeagues) {
+        if (config.preferredLeagues[key] == data.competition.code) {
+          return (
+            teams.includes(match.homeTeam.name) ||
+            teams.includes(match.awayTeam.name)
+          );
+        }
       }
 
-      return (
-        teams.includes(match.homeTeam.name) ||
-        teams.includes(match.awayTeam.name)
-      );
+      for (key in config.leagues) {
+        if (config.leagues[key] == data.competition.code) {
+          return (
+            teams.includes(match.homeTeam.name) &&
+            teams.includes(match.awayTeam.name)
+          );
+        }
+      }
+
+      return false;
     });
 
     function getFormattedDate(date) {
@@ -88,9 +102,9 @@ Module.register('MMM-Football-Fixtures', {
       return -1;
     }
 
-    function sortByDay(a, b) {
-      var dateA = Date.parse(a.formattedDate);
-      var dateB = Date.parse(b.formattedDate);
+    function sortByUtcDate(a, b) {
+      var dateA = a.utcDate;
+      var dateB = b.utcDate;
 
       if (dateA < dateB) {
         return -1;
@@ -125,6 +139,7 @@ Module.register('MMM-Football-Fixtures', {
       if (index == -1) {
         array.push({
           formattedDate: formattedDate,
+          utcDate: new Date(match.utcDate),
           games: [
             match
           ]
@@ -135,30 +150,21 @@ Module.register('MMM-Football-Fixtures', {
       }
     }
 
+    console.log('prioritisedMatches', prioritisedMatches)
+
     var formattedMatches = [];
 
+    console.log('this.leagueTable', this.leagueTable);
+
+    var leagueTable = this.leagueTable;
+
     prioritisedMatches.map(function(match) {
-      addToFormattedMatchesArray(formattedMatches, match);
+      addToFormattedMatchesArray(leagueTable, match);
     });
 
-    var gameCounter = 0;
-    var limitedMatches = [];
+    this.leagueTable = this.leagueTable.sort(sortByUtcDate);
 
-    for (var i = 0; i < formattedMatches.length; i++) {
-      for (var j = 0; j < formattedMatches[i].games.length; j++) {
-        var match = formattedMatches[i].games[j];
-
-        if (!this.config.displayMax || gameCounter < this.config.displayMax) {
-          addToFormattedMatchesArray(limitedMatches, match);
-        }
-
-        gameCounter++;
-      }
-    }
-
-    if (limitedMatches.length > 0) {
-      this.leagueTable[data.league] = limitedMatches.sort(sortByDay);
-    }
+    console.log('this.leagueTable', this.leagueTable);
   },
 
   getScripts: function() {
@@ -187,106 +193,100 @@ Module.register('MMM-Football-Fixtures', {
     table.classList.add('football-fixtures-table', 'xsmall');
 
     var maxGames = this.config.displayMax;
-    var eachLeague = Math.floor(maxGames / Object.keys(this.leagueTable).length);
+    var numberOfGames = this.leagueTable.map(function(day) {
+      return day.games.length;
+    }).reduce((a, b) => a + b, 0);
+    var gamesToDisplay = Math.min(maxGames, numberOfGames);
 
-    for (var league in this.leagueTable) {
-      var leagueHeader = document.createElement('thead');
-      var leagueRow = document.createElement('tr');
-      leagueRow.classList.add('league-row');
+    var leagueGames = document.createElement('tbody');
+    leagueGames.classList.add('league-games');
 
-      var leagueHead = document.createElement('th');
-      leagueHead.classList.add('centered', 'league-cell');
-      leagueHead.innerHTML = league;
-      leagueHead.colSpan = 5;
+    for (var i = 0; i < this.leagueTable.length; i++) {
+      var day = this.leagueTable[i];
 
-      leagueRow.appendChild(leagueHead);
-      leagueHeader.appendChild(leagueRow);
-      table.appendChild(leagueHeader);
+      var dateRow = document.createElement('tr');
+      dateRow.classList.add('date-row');
 
-      var gameCount = 0;
+      var dateCell = document.createElement('td');
+      dateCell.classList.add('centered');
+      dateCell.colSpan = 5;
+      dateCell.innerHTML = day.formattedDate;
 
-      var leagueGames = document.createElement('tbody');
-      leagueGames.classList.add('league-games');
+      dateRow.appendChild(dateCell);
+      leagueGames.appendChild(dateRow);
 
-      for (var i = 0; i < this.leagueTable[league].length; i++) {
-        var day = this.leagueTable[league][i];
+      for (var j = 0; j < day.games.length; j++) {
+        gamesToDisplay--;
 
-        var dateRow = document.createElement('tr');
-        dateRow.classList.add('date-row');
-
-        var dateCell = document.createElement('td');
-        dateCell.classList.add('centered');
-        dateCell.colSpan = 5;
-        dateCell.innerHTML = day.formattedDate;
-
-        dateRow.appendChild(dateCell);
-        leagueGames.appendChild(dateRow);
-
-        for (var j = 0; j < day.games.length; j++) {
-          gameCount++;
-
-          if (gameCount > eachLeague) {
-            break;
-          }
-
-          var game = day.games[j];
-
-          var gameRow = document.createElement('tr');
-
-          var homeIconCell = document.createElement('td');
-          var homeIcon = document.createElement('img');
-          homeIcon.classList.add('team-icon');
-
-          if (this.config.teamBadges[game.homeTeam.name]) {
-            homeIcon.src = this.config.teamBadges[game.homeTeam.name]
-          } else {
-            homeIcon.src = 'http://en.fodb.net/img/club/England/100/Leeds-United.png';
-          }
-
-          homeIconCell.appendChild(homeIcon);
-          var homeTeamName = document.createElement('td');
-          homeTeamName.classList.add('team-cell', '-home');
-          homeTeamName.innerHTML = game.homeTeam.name;
-
-          var gameTimeCell = document.createElement('td');
-          var date = new Date(game.utcDate);
-          gameTimeCell.innerHTML = date.getHours() + ':' + pad(date.getMinutes(), 2);
-
-          var awayIconCell = document.createElement('td');
-          var awayIcon = document.createElement('img');
-          awayIcon.classList.add('team-icon');
-
-          if (this.config.teamBadges[game.awayTeam.name]) {
-            awayIcon.src = this.config.teamBadges[game.awayTeam.name]
-          } else {
-            awayIcon.src = 'http://en.fodb.net/img/club/England/100/Leeds-United.png';
-          }
-
-          awayIconCell.appendChild(awayIcon);
-          var awayTeamName = document.createElement('td');
-          awayTeamName.classList.add('team-cell', '-away');
-          awayTeamName.innerHTML = game.awayTeam.name;
-
-          gameRow.appendChild(homeIconCell);
-          gameRow.appendChild(homeTeamName);
-          gameRow.appendChild(gameTimeCell);
-          gameRow.appendChild(awayTeamName);
-          gameRow.appendChild(awayIconCell);
-
-          leagueGames.appendChild(gameRow);
-        }
-
-        if (gameCount > eachLeague) {
+        if (gamesToDisplay < 0) {
           break;
         }
+
+        var game = day.games[j];
+
+        var gameRow = document.createElement('tr');
+
+        var homeIconCell = document.createElement('td');
+        var homeIcon = document.createElement('img');
+        homeIcon.classList.add('team-icon');
+
+        if (this.config.teamBadges[game.homeTeam.name]) {
+          homeIcon.src = this.config.teamBadges[game.homeTeam.name]
+        } else {
+          homeIcon.src = 'http://en.fodb.net/img/club/England/100/Leeds-United.png';
+        }
+
+        homeIconCell.appendChild(homeIcon);
+        var homeTeamName = document.createElement('td');
+        homeTeamName.classList.add('team-cell', '-home');
+        homeTeamName.innerHTML = game.homeTeam.name;
+
+        var gameTimeCell = document.createElement('td');
+
+        var centreText;
+        if (game.status == 'FINISHED') {
+          if (game.score.extraTime.homeTeam) {
+            centreText = game.score.extraTime.homeTeam + ' : ' + game.score.extraTime.awayTeam + ' (ET)'
+          } else {
+            centreText = game.score.fullTime.homeTeam + ' : ' + game.score.fullTime.awayTeam
+          }
+        } else {
+          var date = new Date(game.utcDate);
+          centreText = pad(date.getHours(), 2) + ':' + pad(date.getMinutes(), 2);
+        }
+
+        gameTimeCell.innerHTML = centreText;
+
+        var awayIconCell = document.createElement('td');
+        var awayIcon = document.createElement('img');
+        awayIcon.classList.add('team-icon');
+
+        if (this.config.teamBadges[game.awayTeam.name]) {
+          awayIcon.src = this.config.teamBadges[game.awayTeam.name]
+        } else {
+          awayIcon.src = 'http://en.fodb.net/img/club/England/100/Leeds-United.png';
+        }
+
+        awayIconCell.appendChild(awayIcon);
+        var awayTeamName = document.createElement('td');
+        awayTeamName.classList.add('team-cell', '-away');
+        awayTeamName.innerHTML = game.awayTeam.name;
+
+        gameRow.appendChild(homeIconCell);
+        gameRow.appendChild(homeTeamName);
+        gameRow.appendChild(gameTimeCell);
+        gameRow.appendChild(awayTeamName);
+        gameRow.appendChild(awayIconCell);
+
+        leagueGames.appendChild(gameRow);
       }
 
-      if (gameCount == 0) {
+      if (gamesToDisplay < 0) {
         break;
       }
-
-      table.appendChild(leagueGames);
     }
+
+    table.appendChild(leagueGames);
 
     return table;
   },
@@ -295,7 +295,6 @@ Module.register('MMM-Football-Fixtures', {
     switch (notification) {
       case 'FOOTBALL_FIXTURES_DATA':
         this.updateLeagueTable(payload, this.config.teams);
-        this.updateDom();
         break;
     }
   }
