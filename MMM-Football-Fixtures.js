@@ -226,6 +226,10 @@ Module.register('MMM-Football-Fixtures', {
 
         var gameRow = document.createElement('tr');
 
+        var emboldenGame =
+          this.config.teams.includes(game.homeTeam.name) &&
+          this.config.teams.includes(game.awayTeam.name)
+
         var homeIconCell = document.createElement('td');
         var homeIcon = document.createElement('img');
         homeIcon.classList.add('team-icon');
@@ -240,6 +244,10 @@ Module.register('MMM-Football-Fixtures', {
         var homeTeamName = document.createElement('td');
         homeTeamName.classList.add('team-cell', '-home');
         homeTeamName.innerHTML = game.homeTeam.name;
+
+        if (emboldenGame) {
+          homeTeamName.style.fontWeight = 'bold';
+        }
 
         var gameTimeCell = document.createElement('td');
 
@@ -271,6 +279,10 @@ Module.register('MMM-Football-Fixtures', {
         var awayTeamName = document.createElement('td');
         awayTeamName.classList.add('team-cell', '-away');
         awayTeamName.innerHTML = game.awayTeam.name;
+
+        if (emboldenGame) {
+          awayTeamName.style.fontWeight = 'bold';
+        }
 
         gameRow.appendChild(homeIconCell);
         gameRow.appendChild(homeTeamName);
