@@ -42,7 +42,7 @@ module.exports = NodeHelper.create({
     var futureDateString = futureDate.getFullYear() + '-' + pad(futureDate.getMonth() + 1, 2) + '-' + pad(futureDate.getDate(), 2)
 
     var options = {
-      url: 'http://api.football-data.org/v2/competitions/' + leagues[key] + '/matches/?status=FINISHED,SCHEDULED,LIVE,IN_PLAY&dateFrom=' + dateString + '&dateTo=' + futureDateString
+      url: 'http://api.football-data.org/v2/competitions/' + leagues[key] + '/matches/?status=SCHEDULED,LIVE,IN_PLAY,PAUSED,FINISHED&dateFrom=' + dateString + '&dateTo=' + futureDateString
     }
 
     console.log('options', options)

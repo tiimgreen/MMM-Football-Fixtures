@@ -219,6 +219,10 @@ Module.register('MMM-Football-Fixtures', {
     leagueGames.classList.add('league-games');
 
     for (var i = 0; i < this.leagueTable.length; i++) {
+      if (gamesToDisplay < 0) {
+        break;
+      }
+
       var day = this.leagueTable[i];
 
       var dateRow = document.createElement('tr');
@@ -267,20 +271,41 @@ Module.register('MMM-Football-Fixtures', {
         }
 
         var gameTimeCell = document.createElement('td');
+        gameTimeCell.style.textAlign = 'center';
 
-        var centreText;
-        if (game.status == 'FINISHED') {
-          if (game.score.extraTime.homeTeam) {
-            centreText = game.score.extraTime.homeTeam + ' : ' + game.score.extraTime.awayTeam + ' (ET)'
-          } else {
-            centreText = game.score.fullTime.homeTeam + ' : ' + game.score.fullTime.awayTeam
-          }
-        } else {
-          var date = new Date(game.utcDate);
-          centreText = pad(date.getHours(), 2) + ':' + pad(date.getMinutes(), 2);
+        switch (game.status) {
+          case 'FINISHED':
+            if (game.score.extraTime.homeTeam) {
+              gameTimeCell.innerHTML = game.score.extraTime.homeTeam + ' : ' + game.score.extraTime.awayTeam + ' '
+              var minNode = document.createElement('strong');
+              minNode.innerText = '(ET)';
+              gameTimeCell.appendChild(minNode);
+            } else {
+              gameTimeCell.innerHTML = game.score.fullTime.homeTeam + ' : ' + game.score.fullTime.awayTeam
+            }
+            break;
+          case 'IN_PLAY':
+            if (game.score.extraTime.homeTeam) {
+              gameTimeCell.innerHTML = game.score.extraTime.homeTeam + ' : ' + game.score.extraTime.awayTeam + ' '
+            } else if (game.score.fullTime.homeTeam) {
+              gameTimeCell.innerHTML = game.score.fullTime.homeTeam + ' : ' + game.score.fullTime.awayTeam + ' '
+            }
+
+            var minNode = document.createElement('strong');
+            minNode.innerText = '(LIVE)';
+            gameTimeCell.appendChild(minNode);
+            break;
+          case 'PAUSED':
+            gameTimeCell.innerHTML = game.score.halfTime.homeTeam + ' : ' + game.score.halfTime.awayTeam + ' ';
+            var htNode = document.createElement('strong');
+            htNode.innerText = '(HT)';
+            gameTimeCell.appendChild(htNode);
+            break;
+          default:
+            var date = new Date(game.utcDate);
+            gameTimeCell.innerHTML = pad(date.getHours(), 2) + ':' + pad(date.getMinutes(), 2);
+            break;
         }
-
-        gameTimeCell.innerHTML = centreText;
 
         var awayIconCell = document.createElement('td');
         var awayIcon = document.createElement('img');
