@@ -1,6 +1,6 @@
 Module.register('MMM-Football-Fixtures', {
   defaults: {
-    apiKey: false,
+    apiKey: null,
     coloured: false,
     leagues: {},
     preferredLeagues: {},
@@ -8,6 +8,7 @@ Module.register('MMM-Football-Fixtures', {
     teams: [],
     teamBadges: {},
     daysAhead: 28,
+    daysBehind: 2,
     displayMax: 10,
   },
 
@@ -24,9 +25,14 @@ Module.register('MMM-Football-Fixtures', {
       this.config.apiKey ? 900000 : 1800000 // with apiKey every 15min, without every 30min
     );
 
+    this.updateDom = this.updateDom.bind(this);
+    this.socketNotificationReceived = this.socketNotificationReceived.bind(this);
+
+    var updateDom = this.updateDom;
+
     // refresh every x milliseconds
     setInterval(
-      this.updateDom.bind(this),
+      this.updateDom,
       5000
     );
   },
@@ -137,6 +143,7 @@ Module.register('MMM-Football-Fixtures', {
       var index = findObjectWithDate(array, formattedDate);
 
       if (index == -1) {
+        // date does not exist in array
         array.push({
           formattedDate: formattedDate,
           utcDate: new Date(match.utcDate),
@@ -145,16 +152,28 @@ Module.register('MMM-Football-Fixtures', {
           ]
         });
       } else {
-        array[index].games.push(match);
+        // a match on this day is already present
+
+        // check if match is already in array, if so replace it
+        var found = false;
+        for (var i = 0; i < array[index].games.length; i++) {
+          var currentMatch = array[index].games[i];
+
+          if (currentMatch.id == match.id) {
+            array[index].games[i] = match;
+            found = true;
+          }
+        }
+
+        if (!found) {
+          array[index].games.push(match);
+        }
+
         array[index].games = array[index].games.sort(sortByKickOff);
       }
     }
 
-    console.log('prioritisedMatches', prioritisedMatches)
-
     var formattedMatches = [];
-
-    console.log('this.leagueTable', this.leagueTable);
 
     var leagueTable = this.leagueTable;
 
@@ -163,8 +182,6 @@ Module.register('MMM-Football-Fixtures', {
     });
 
     this.leagueTable = this.leagueTable.sort(sortByUtcDate);
-
-    console.log('this.leagueTable', this.leagueTable);
   },
 
   getScripts: function() {
