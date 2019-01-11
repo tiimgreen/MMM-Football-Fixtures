@@ -258,7 +258,7 @@ Module.register('MMM-Football-Fixtures', {
         if (this.config.teamBadges[game.homeTeam.name]) {
           homeIcon.src = this.config.teamBadges[game.homeTeam.name]
         } else {
-          homeIcon.src = 'http://en.fodb.net/img/club/England/100/Leeds-United.png';
+          homeIcon.src = 'https://www.hamptoncourthouse.co.uk/wp-content/uploads/2016/12/Football-256x256.png';
         }
 
         homeIconCell.appendChild(homeIcon);
@@ -314,7 +314,7 @@ Module.register('MMM-Football-Fixtures', {
         if (this.config.teamBadges[game.awayTeam.name]) {
           awayIcon.src = this.config.teamBadges[game.awayTeam.name]
         } else {
-          awayIcon.src = 'http://en.fodb.net/img/club/England/100/Leeds-United.png';
+          awayIcon.src = 'https://www.hamptoncourthouse.co.uk/wp-content/uploads/2016/12/Football-256x256.png';
         }
 
         awayIconCell.appendChild(awayIcon);
